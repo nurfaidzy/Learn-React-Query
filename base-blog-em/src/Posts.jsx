@@ -11,7 +11,6 @@ async function fetchPosts() {
   );
 
   const { data } = response;
-  console.log(data);
 
   return data;
 }
@@ -21,8 +20,9 @@ export function Posts() {
   const [selectedPost, setSelectedPost] = useState(null);
 
   // replace with useQuery
-  const { data, isError, error, isLoading } = useQuery("posts", fetchPosts);
-  console.log(isLoading);
+  const { data, isError, error, isLoading } = useQuery("posts", fetchPosts, {
+    staleTime: 2000,
+  });
 
   return (
     <>
