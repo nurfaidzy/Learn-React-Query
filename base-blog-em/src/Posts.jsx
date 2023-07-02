@@ -1,13 +1,19 @@
 import { useState } from "react";
+import { useQuery } from "react-query";
 
 import { PostDetail } from "./PostDetail";
+import axios from "axios";
 const maxPostPage = 10;
 
 async function fetchPosts() {
-  const response = await fetch(
+  const response = await axios.get(
     "https://jsonplaceholder.typicode.com/posts?_limit=10&_page=0"
   );
-  return response.json();
+
+  const { data } = response;
+  console.log(data);
+
+  return data;
 }
 
 export function Posts() {
@@ -15,20 +21,32 @@ export function Posts() {
   const [selectedPost, setSelectedPost] = useState(null);
 
   // replace with useQuery
-  const data = [];
+  const { data, isError, error, isLoading } = useQuery("posts", fetchPosts);
+  console.log(isLoading);
 
   return (
     <>
       <ul>
-        {data.map((post) => (
-          <li
-            key={post.id}
-            className="post-title"
-            onClick={() => setSelectedPost(post)}
-          >
-            {post.title}
-          </li>
-        ))}
+        {isError && (
+          <>
+            <p>Error with result : {error.toString()}</p>
+          </>
+        )}
+        {isLoading && (
+          <>
+            <p>Loading</p>
+          </>
+        )}
+        {data !== undefined &&
+          data.map((post) => (
+            <li
+              key={post.id}
+              className="post-title"
+              onClick={() => setSelectedPost(post)}
+            >
+              {post.title}
+            </li>
+          ))}
       </ul>
       <div className="pages">
         <button disabled onClick={() => {}}>
